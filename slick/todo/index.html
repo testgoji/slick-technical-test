@@ -1,0 +1,91 @@
+<html lang="en" >
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Angular Material style sheet -->
+  <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.css">
+</head>
+<body ng-app="Todo" ng-cloak>
+<div ng-controller="main" flex>
+    <md-toolbar class="md-primary">
+        <div class="md-toolbar-tools">
+            <h1>Alex Slick ToDo</h1>
+        
+        </div>
+    </md-toolbar>
+    <div layout="column" flex layout-align="start center" layout-padding>
+        <label>Title</label>
+        <input type="text" ng-model="newTitle" />
+        <label>Text</label>
+        <textarea ng-model="newText"></textarea>
+        <md-button ng-click="createNewItem()">Save</md-button>
+    </div>
+    <div layout="row">
+        <div layout="column" style="background-color:yellow;width:200px;min-height:200px;padding:12px;" flex="25" ng-repeat="item in toDoItems">
+            <md-button ng-click="deleteItem($index)" class="deleteButton">Delete</md-button>
+            <input type="text" ng-model="item.title">
+            <textarea ng-model="item.text">{{item.text}}</textarea>
+            <md-button ng-click="updateItem($index,item.title,item.text)">Update</md-button>
+        </div>
+    </div>
+</div>
+
+  
+  <!-- Angular Material requires Angular.js Libraries -->
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-animate.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-aria.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-messages.min.js"></script>
+
+  <!-- Angular Material Library -->
+  <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.js"></script>
+  
+  <!-- Your application bootstrap  -->
+  <script type="text/javascript">    
+    /**
+     * You must include the dependency on 'ngMaterial' 
+     */
+    var app = angular.module('Todo', ['ngMaterial']);
+
+    app.controller('main', function($scope){
+        $scope.toDoItems = [];
+        
+
+        $scope.createNewItem = function(){
+            var newItem = {
+                title:$scope.newTitle,
+                text:$scope.newText
+            };
+            $scope.toDoItems.push(newItem);
+            $scope.newTitle = '';
+            $scope.newText = '';
+            $scope.updateLocalStorage();
+        };
+
+        $scope.getItems = function(){
+            if (localStorage.getItem('toDoItems') && localStorage.getItem('toDoItems').length > 0){
+                $scope.toDoItems = JSON.parse(localStorage.getItem('toDoItems'));
+            }
+            
+        };
+
+        $scope.updateItem = function(index,title,text){
+            $scope.toDoItems[index].title = title;
+            $scope.toDoItems[index].text = text;
+            $scope.updateLocalStorage();
+        };
+
+        $scope.deleteItem = function(index){
+            $scope.toDoItems.splice(index, 1);
+            $scope.updateLocalStorage();
+        }
+
+        $scope.updateLocalStorage = function(){
+            localStorage.setItem('toDoItems',JSON.stringify($scope.toDoItems));
+        };
+
+        $scope.getItems();
+    });
+  </script>
+  
+</body>
+</html>
